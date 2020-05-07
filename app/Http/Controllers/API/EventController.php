@@ -16,7 +16,7 @@ class EventController extends BaseController
     }
 
 
-    public function store(Request $request){
+    public function create(Request $request){
         $input = $request->all();
 
         $validator = Validator::make($input, [
@@ -76,13 +76,32 @@ class EventController extends BaseController
         return $this->sendResponse($event->toArray(), 'Event has been updated');
     }
 
-    public function destroy(Event $event){
+    public function destroy($id){
+        $event = Event::find($id);
+
+        if(is_null($event)){
+            return $this->sendError('Event does not exist');
+        }
+
         try {
             $event->delete();
         } catch (\Exception $e) {
         }
 
         return $this->sendResponse($event->toArray(), 'Event has been deleted');
+    }
+
+    public function sendImage($id, Request $request){
+        if(isNull($request)){
+            return $this->sendError('What kind of image is this empty garbage');
+        }
+
+        $event = Event::find($id);
+
+        $event->picture = $request;
+        $event->save();
+        return $this->sendResponse($event->toArray(), 'Event has been updated');
+
     }
 
 

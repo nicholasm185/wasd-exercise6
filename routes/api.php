@@ -21,7 +21,13 @@ Route::post('login','API\RegisterController@login');
 
 Route::middleware('auth:api')->group(function() {
 //    Route::post('details', 'API\UserController@details');
-    Route::resource('events', 'API\EventController');
+    Route::post('events/create', 'API\EventController@create');
+    Route::post('events/update', 'API\EventController@update');
+    Route::get('events/showAll', 'API\EventController@index');
+    Route::get('events/show/{id}', 'API\EventController@show');
+    Route::post('events/update/{id}', 'API\EventController@update');
+    Route::get('events/delete/{id}', 'API\EventController@destroy');
+    Route::post('events/uploadImage/{id}', 'API\EventController@sendImage');
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
