@@ -48,7 +48,7 @@ class EventController extends BaseController
         return $this->sendResponse($event->toArray(), 'Event found!');
     }
 
-    public function update(Request $request, Event $event){
+    public function update(Request $request, $id){
         $input = $request->all();
 
         $validator = Validator::make($input, [
@@ -63,6 +63,12 @@ class EventController extends BaseController
 
         if($validator->fails()){
             return $this->sendError('incomplete data', $validator->errors());
+        }
+
+        $event = Event::find($id);
+
+        if(is_null($event)){
+            return $this->sendError('Event does not exist');
         }
 
         $event->eventOrganizer = $input['eventOrganizer'];
