@@ -28,6 +28,7 @@ Route::middleware('auth:api')->group(function() {
     Route::post('events/update/{id}', 'API\EventController@update');
     Route::get('events/delete/{id}', 'API\EventController@destroy');
     Route::post('events/uploadImage/{id}', 'API\EventController@sendImage');
+    Route::post('events/debugImage/{id}', 'API\EventController@debug_image');
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

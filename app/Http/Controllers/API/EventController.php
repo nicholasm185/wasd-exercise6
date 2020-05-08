@@ -96,18 +96,44 @@ class EventController extends BaseController
 
         return $this->sendResponse($event->toArray(), 'Event has been deleted');
     }
-
+//TODO: THIS DOESNT WORK, PLS FIX, ONLY THE STUPID PATH IS SENT
     public function sendImage($id, Request $request){
-        if(isNull($request)){
-            return $this->sendError('What kind of image is this empty garbage');
+
+        if($this->is_image($request['image'])){
+            $event = Event::find($id);
+
+            if(is_null($event)){
+                return $this->sendError('Event not found');
+            }
+
+            $event->picture = $request['image'];
+            $event->save();
+            return $this->sendResponse($event->toArray(), 'Event has been updated');
         }
 
+        return $this->sendError('not image');
+
+    }
+
+//    Silver Moon binarytides.com
+    function is_image($path)
+    {
+        $a = getimagesize($path);
+        $image_type = $a[2];
+
+        if(in_array($image_type , array(IMAGETYPE_GIF , IMAGETYPE_JPEG ,IMAGETYPE_PNG , IMAGETYPE_BMP)))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    function debug_image($id){
         $event = Event::find($id);
-
-        $event->picture = $request;
-        $event->save();
-        return $this->sendResponse($event->toArray(), 'Event has been updated');
-
+        if(is_null($event)){
+            return $this->sendError('Event not found');
+        }
+        return response()->file($event['picture']);
     }
 
 
