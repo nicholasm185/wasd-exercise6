@@ -26,15 +26,24 @@ class EventController extends BaseController
             'endDate' => 'required',
             'eventDescription' => 'required',
             'email' => 'required',
-            'phone' => 'required'
+            'phone' => 'required',
+            'picture' => 'required'
         ]);
 
         if($validator->fails()){
             return $this->sendError('Validation Error, unauthorised', $validator->errors());
         }
 
-        $event = Event::create($input);
+        $filename = $input['eventOrganizer'].'_'.$input['eventName'].'_event_poster.jpg';
+        $path = $request->file('picture')->move(public_path('/event_posters'), $filename);
+        $photoURL = url('/event_posters/'.$filename);
 
+//        return $this->sendResponse($photoURL, 'debug');
+
+        $input['picture'] = urlencode($photoURL);
+//
+        $event = Event::create($input);
+//
         return $this->sendResponse($event->toArray(), 'Event Created!');
     }
 
@@ -58,7 +67,8 @@ class EventController extends BaseController
             'endDate' => 'required',
             'eventDescription' => 'required',
             'email' => 'required',
-            'phone' => 'required'
+            'phone' => 'required',
+            'picture' => 'required'
         ]);
 
         if($validator->fails()){
@@ -78,6 +88,7 @@ class EventController extends BaseController
         $event->eventDescription =$input['eventDescription'];
         $event->email =$input['email'];
         $event->phone =$input['phone'];
+//        $event->picture = $input['picture'];
         $event->save();
         return $this->sendResponse($event->toArray(), 'Event has been updated');
     }
@@ -96,45 +107,45 @@ class EventController extends BaseController
 
         return $this->sendResponse($event->toArray(), 'Event has been deleted');
     }
-//TODO: THIS DOESNT WORK, PLS FIX, ONLY THE STUPID PATH IS SENT
-    public function sendImage($id, Request $request){
 
-        if($this->is_image($request['image'])){
-            $event = Event::find($id);
-
-            if(is_null($event)){
-                return $this->sendError('Event not found');
-            }
-
-            $event->picture = $request['image'];
-            $event->save();
-            return $this->sendResponse($event->toArray(), 'Event has been updated');
-        }
-
-        return $this->sendError('not image');
-
-    }
-
-//    Silver Moon binarytides.com
-    function is_image($path)
-    {
-        $a = getimagesize($path);
-        $image_type = $a[2];
-
-        if(in_array($image_type , array(IMAGETYPE_GIF , IMAGETYPE_JPEG ,IMAGETYPE_PNG , IMAGETYPE_BMP)))
-        {
-            return true;
-        }
-        return false;
-    }
-
-    function debug_image($id){
-        $event = Event::find($id);
-        if(is_null($event)){
-            return $this->sendError('Event not found');
-        }
-        return response()->file($event['picture']);
-    }
+//    public function sendImage($id, Request $request){
+//
+//        if($this->is_image($request['image'])){
+//            $event = Event::find($id);
+//
+//            if(is_null($event)){
+//                return $this->sendError('Event not found');
+//            }
+//
+//            $event->picture = $request['image'];
+//            $event->save();
+//            return $this->sendResponse($event->toArray(), 'Event has been updated');
+//        }
+//
+//        return $this->sendError('not image');
+//
+//    }
+//
+////    Silver Moon binarytides.com
+//    function is_image($path)
+//    {
+//        $a = getimagesize($path);
+//        $image_type = $a[2];
+//
+//        if(in_array($image_type , array(IMAGETYPE_GIF , IMAGETYPE_JPEG ,IMAGETYPE_PNG , IMAGETYPE_BMP)))
+//        {
+//            return true;
+//        }
+//        return false;
+//    }
+//
+//    function debug_image($id){
+//        $event = Event::find($id);
+//        if(is_null($event)){
+//            return $this->sendError('Event not found');
+//        }
+//        return response()->file($event['picture']);
+//    }
 
 
 }
