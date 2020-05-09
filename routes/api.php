@@ -31,6 +31,10 @@ Route::middleware('auth:api')->group(function() {
     Route::post('events/debugImage/{id}', 'API\EventController@debug_image');
 });
 
+Route::middleware(['auth:api','isAdmin'])->group(function (){
+    Route::post('/admin/amIAdmin', 'API\AdminControls@imAdmin');
+});
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

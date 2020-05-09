@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddEventOrganizerBound extends Migration
+class AddAdminStatusToUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class AddEventOrganizerBound extends Migration
      */
     public function up()
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->bigInteger('eventOrganizer',false,true);
-            $table->foreign('eventOrganizer')->references('id')->on('users')->onDelete('cascade');
+        Schema::table('users', function (Blueprint $table) {
+            $table->smallInteger('admin',false,true)->default(0)->nullable(false);
         });
     }
 
@@ -26,8 +25,8 @@ class AddEventOrganizerBound extends Migration
      */
     public function down()
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->dropColumn('eventOrganizer');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('admin');
         });
     }
 }
