@@ -10,14 +10,17 @@ use Illuminate\Http\Request;
 
 class EventController extends BaseController
 {
-    public function index(){
-        $events = Event::all();
+    public function index(Request $request){
+        $userID = $request->user()->id;
+        $events = Event::all()->where('eventOrganizer', $userID);
         return $this->sendResponse($events->toArray(), 'Events retrieved successfully!');
     }
 
 
     public function create(Request $request){
         $input = $request->all();
+        $userID = $request->user()->id;
+        $input['eventOrganizer'] = $userID;
 
         $validator = Validator::make($input, [
             'eventOrganizer' => 'required',
