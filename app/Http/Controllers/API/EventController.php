@@ -12,7 +12,7 @@ class EventController extends BaseController
 {
     public function index(Request $request){
         $userID = $request->user()->id;
-        $events = Event::all()->where('eventOrganizer', $userID);
+        $events = Event::where('eventOrganizer', $userID)->get();
         return $this->sendResponse($events->toArray(), 'Events retrieved successfully!');
     }
 
@@ -50,8 +50,9 @@ class EventController extends BaseController
         return $this->sendResponse($event->toArray(), 'Event Created!');
     }
 
-    public function show($id){
-        $event = Event::find($id);
+    public function show(Request $request, $id){
+        $userID = $request->user()->id;
+        $event = Event::where('eventOrganizer', $userID)->where('id', $id)->get()->first();
 
         if(is_null($event)){
             return $this->sendError('Event does not exist');
@@ -78,7 +79,8 @@ class EventController extends BaseController
             return $this->sendError('incomplete data', $validator->errors());
         }
 
-        $event = Event::find($id);
+        $userID = $request->user()->id;
+        $event = Event::where('eventOrganizer', $userID)->where('id', $id)->get()->first();
 
         if(is_null($event)){
             return $this->sendError('Event does not exist');
@@ -91,13 +93,19 @@ class EventController extends BaseController
         $event->eventDescription =$input['eventDescription'];
         $event->email =$input['email'];
         $event->phone =$input['phone'];
+
+        $filename = $input['eventOrganizer'].'_'.$input['eventName'].'_event_poster.jpg';
+        $path = $request->file('picture')->move(public_path('/event_posters'), $filename);
+
 //        $event->picture = $input['picture'];
+
         $event->save();
         return $this->sendResponse($event->toArray(), 'Event has been updated');
     }
 
-    public function destroy($id){
-        $event = Event::find($id);
+    public function destroy(Request $request, $id){
+        $userID = $request->user()->id;
+        $event = Event::where('eventOrganizer', $userID)->where('id', $id)->get()->first();
 
         if(is_null($event)){
             return $this->sendError('Event does not exist');
