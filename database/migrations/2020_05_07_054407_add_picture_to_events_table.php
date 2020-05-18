@@ -15,8 +15,8 @@ class AddPictureToEventsTable extends Migration
     public function up()
     {
         Schema::table('events', function (Blueprint $table) {
-            Schema::dropIfExists('picture');
-//            $table->string('picture');
+//            Schema::dropIfExists('picture');
+            $table->string('picture');
         });
     }
 

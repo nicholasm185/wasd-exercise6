@@ -33,6 +33,7 @@ Route::middleware('auth:api')->group(function() {
 
 Route::middleware(['auth:api','isAdmin'])->group(function (){
     Route::post('/admin/amIAdmin', 'API\AdminControls@imAdmin');
+    Route::post('/admin/userList', 'API\AdminControls@listUsers');
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
